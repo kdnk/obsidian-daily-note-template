@@ -1,6 +1,13 @@
 import { Notice, Plugin, TAbstractFile, TFile, normalizePath } from 'obsidian';
-import { getDateFromDailyNotePath, getPathForDailyNote } from './dailyNotePath';
-import { getDailyNotesCoreSettings } from './dailyNotesSettings';
+import {
+	getDateFromDailyNotePath,
+	getDateFromIsoDateFilename,
+	getPathForDailyNote,
+} from './dailyNotePath';
+import {
+	getDailyNotesCoreSettings,
+	getDailyNotesInternalShape,
+} from './dailyNotesSettings';
 import {
 	DEFAULT_SETTINGS,
 	DailyNoteTemplateSettings,
@@ -90,7 +97,7 @@ export default class DailyNoteTemplatePlugin extends Plugin {
 
 	private queueExistingFile(path: string, delayMs: number): void {
 		const settings = getDailyNotesCoreSettings(this.app);
-		if (!settings || !getDateFromDailyNotePath(path, settings)) {
+		if (!getBaseDate(path, settings)) {
 			return;
 		}
 
@@ -130,11 +137,7 @@ export default class DailyNoteTemplatePlugin extends Plugin {
 
 	private async processPathOnce(path: string, attempt: number): Promise<void> {
 		const settings = getDailyNotesCoreSettings(this.app);
-		if (!settings) {
-			return;
-		}
-
-		const baseDate = getDateFromDailyNotePath(path, settings);
+		const baseDate = getBaseDate(path, settings);
 		if (!baseDate) {
 			return;
 		}
@@ -146,7 +149,7 @@ export default class DailyNoteTemplatePlugin extends Plugin {
 		const action = decideDailyNoteAction({
 			fileExists: file !== null,
 			content,
-			hasTemplate: settings.template.length > 0,
+			hasTemplate: (settings?.template.length ?? 0) > 0,
 			syncState: getSyncState(this.app),
 		});
 
@@ -165,6 +168,9 @@ export default class DailyNoteTemplatePlugin extends Plugin {
 		}
 
 		if (action === 'apply-template' && file) {
+			if (!settings) {
+				return;
+			}
 			const template = await this.readTemplate(settings.template);
 			if (template === null) {
 				return;
@@ -174,6 +180,9 @@ export default class DailyNoteTemplatePlugin extends Plugin {
 		}
 
 		if (action === 'create-from-template') {
+			if (!settings) {
+				return;
+			}
 			await this.createFromTemplate(path, settings.template, baseDate);
 		}
 	}
@@ -256,10 +265,7 @@ export default class DailyNoteTemplatePlugin extends Plugin {
 		const activeFile = this.app.workspace.getActiveFile();
 		const settings = getDailyNotesCoreSettings(this.app);
 		const activePath = activeFile?.path ?? null;
-		const baseDate =
-			activePath && settings
-				? getDateFromDailyNotePath(activePath, settings)
-				: null;
+		const baseDate = activePath ? getBaseDate(activePath, settings) : null;
 		const content = activeFile ? await this.app.vault.cachedRead(activeFile) : null;
 		const syncState = getSyncState(this.app);
 		const action = decideDailyNoteAction({
@@ -278,6 +284,7 @@ export default class DailyNoteTemplatePlugin extends Plugin {
 				hasDntExpression: content?.includes('<% dnt.') ?? false,
 				syncState,
 				action,
+				internalShape: getDailyNotesInternalShape(this.app),
 			}),
 			20000,
 		);
@@ -311,4 +318,13 @@ export default class DailyNoteTemplatePlugin extends Plugin {
 
 function sleep(ms: number): Promise<void> {
 	return new Promise((resolve) => window.setTimeout(resolve, ms));
+}
+
+function getBaseDate(
+	path: string,
+	settings: ReturnType<typeof getDailyNotesCoreSettings>,
+): string | null {
+	return settings
+		? getDateFromDailyNotePath(path, settings)
+		: getDateFromIsoDateFilename(path);
 }

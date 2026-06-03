@@ -47,6 +47,25 @@ export function getPathForDailyNote(
 	return folder ? `${folder}/${formatted}.md` : `${formatted}.md`;
 }
 
+export function getDateFromIsoDateFilename(path: string): string | null {
+	if (!path.endsWith('.md')) {
+		return null;
+	}
+
+	const filename = path.split('/').pop();
+	if (!filename) {
+		return null;
+	}
+
+	const basename = filename.slice(0, -3);
+	try {
+		parseDate(basename);
+		return basename;
+	} catch {
+		return null;
+	}
+}
+
 function normalizeFolder(folder: string): string {
 	return folder.replace(/^\/+|\/+$/g, '');
 }
