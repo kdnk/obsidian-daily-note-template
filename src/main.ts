@@ -8,6 +8,7 @@ import {
 import { getSyncState, onSyncComplete } from './syncStatus';
 import { expandDntExpressions } from './templateEngine';
 import { decideDailyNoteAction } from './processing';
+import { formatDiagnosticNotice } from './diagnostics';
 
 export default class DailyNoteTemplatePlugin extends Plugin {
 	settings!: DailyNoteTemplateSettings;
@@ -44,6 +45,14 @@ export default class DailyNoteTemplatePlugin extends Plugin {
 			id: 'process-active-daily-note',
 			name: 'Process active template',
 			callback: () => this.queueActiveDailyNote(),
+		});
+
+		this.addCommand({
+			id: 'diagnose-active-template',
+			name: 'Diagnose active template',
+			callback: () => {
+				void this.diagnoseActiveDailyNote();
+			},
 		});
 	}
 
@@ -240,6 +249,37 @@ export default class DailyNoteTemplatePlugin extends Plugin {
 		await this.app.vault.create(
 			path,
 			expandDntExpressions(template, { baseDate }),
+		);
+	}
+
+	private async diagnoseActiveDailyNote(): Promise<void> {
+		const activeFile = this.app.workspace.getActiveFile();
+		const settings = getDailyNotesCoreSettings(this.app);
+		const activePath = activeFile?.path ?? null;
+		const baseDate =
+			activePath && settings
+				? getDateFromDailyNotePath(activePath, settings)
+				: null;
+		const content = activeFile ? await this.app.vault.cachedRead(activeFile) : null;
+		const syncState = getSyncState(this.app);
+		const action = decideDailyNoteAction({
+			fileExists: activeFile !== null,
+			content,
+			hasTemplate: (settings?.template.length ?? 0) > 0,
+			syncState,
+		});
+
+		new Notice(
+			formatDiagnosticNotice({
+				activePath,
+				settings,
+				baseDate,
+				contentLength: content?.length ?? null,
+				hasDntExpression: content?.includes('<% dnt.') ?? false,
+				syncState,
+				action,
+			}),
+			20000,
 		);
 	}
 
