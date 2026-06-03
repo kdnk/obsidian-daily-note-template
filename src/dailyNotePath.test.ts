@@ -1,5 +1,9 @@
 import { describe, expect, test } from 'vitest';
-import { getDateFromDailyNotePath, getPathForDailyNote } from './dailyNotePath';
+import {
+	getDateFromDailyNotePath,
+	getDateFromIsoDateFilename,
+	getPathForDailyNote,
+} from './dailyNotePath';
 
 describe('daily note path', () => {
 	test('parses a date from the Daily notes folder and format', () => {
@@ -27,5 +31,12 @@ describe('daily note path', () => {
 		});
 
 		expect(path).toBe('journals/2026-06-03.md');
+	});
+
+	test('parses a date from an ISO date filename without Daily notes settings', () => {
+		expect(getDateFromIsoDateFilename('journals/2026-06-03.md')).toBe(
+			'2026-06-03',
+		);
+		expect(getDateFromIsoDateFilename('notes/not-a-daily-note.md')).toBeNull();
 	});
 });

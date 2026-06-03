@@ -1,5 +1,8 @@
 import { DailyNoteAction, SyncState } from './processing';
-import { DailyNotesCoreSettings } from './dailyNotesSettings';
+import {
+	DailyNotesCoreSettings,
+	DailyNotesInternalShape,
+} from './dailyNotesSettings';
 
 export interface DiagnosticNoticeInput {
 	activePath: string | null;
@@ -9,6 +12,7 @@ export interface DiagnosticNoticeInput {
 	hasDntExpression: boolean;
 	syncState: SyncState;
 	action: DailyNoteAction;
+	internalShape?: DailyNotesInternalShape;
 }
 
 export function formatDiagnosticNotice(input: DiagnosticNoticeInput): string {
@@ -24,5 +28,27 @@ export function formatDiagnosticNotice(input: DiagnosticNoticeInput): string {
 		`has dnt: ${input.hasDntExpression ? 'yes' : 'no'}`,
 		`sync: ${input.syncState}`,
 		`action: ${input.action}`,
+		...formatInternalShape(input.internalShape),
 	].join('\n');
+}
+
+function formatInternalShape(shape: DailyNotesInternalShape | undefined): string[] {
+	if (!shape) {
+		return [];
+	}
+
+	return [
+		`internal plugins: ${shape.hasInternalPlugins ? 'yes' : 'no'}`,
+		`get enabled: ${shape.hasGetEnabledPluginById ? 'yes' : 'no'}`,
+		`get plugin: ${shape.hasGetPluginById ? 'yes' : 'no'}`,
+		`registry daily: ${shape.hasRegistryEntry ? 'yes' : 'no'}`,
+		`enabled keys: ${joinKeys(shape.enabledPluginKeys)}`,
+		`plugin keys: ${joinKeys(shape.pluginKeys)}`,
+		`instance keys: ${joinKeys(shape.instanceKeys)}`,
+		`options keys: ${joinKeys(shape.optionsKeys)}`,
+	];
+}
+
+function joinKeys(keys: string[]): string {
+	return keys.length > 0 ? keys.join(',') : 'none';
 }

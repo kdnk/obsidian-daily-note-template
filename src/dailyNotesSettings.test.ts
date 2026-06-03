@@ -1,5 +1,8 @@
 import { describe, expect, test, vi } from 'vitest';
-import { getDailyNotesCoreSettings } from './dailyNotesSettings';
+import {
+	getDailyNotesCoreSettings,
+	getDailyNotesInternalShape,
+} from './dailyNotesSettings';
 
 vi.mock('obsidian', () => ({
 	normalizePath: (path: string) => path.replace(/\/+/g, '/').replace(/^\/|\/$/g, ''),
@@ -28,6 +31,35 @@ describe('daily notes core settings', () => {
 			folder: 'journals',
 			format: 'YYYY-MM-DD',
 			template: 'templates/daily',
+		});
+	});
+
+	test('summarizes internal plugin shape for mobile diagnostics', () => {
+		const app = {
+			internalPlugins: {
+				getEnabledPluginById() {
+					return {
+						options: {
+							folder: 'journals',
+							format: 'YYYY-MM-DD',
+							template: 'templates/daily',
+						},
+					};
+				},
+				getPluginById() {
+					return null;
+				},
+				plugins: {},
+			},
+		};
+
+		expect(getDailyNotesInternalShape(app as never)).toMatchObject({
+			hasInternalPlugins: true,
+			hasGetEnabledPluginById: true,
+			hasGetPluginById: true,
+			hasRegistryEntry: false,
+			enabledPluginKeys: ['options'],
+			optionsKeys: ['folder', 'format', 'template'],
 		});
 	});
 });
