@@ -1,11 +1,9 @@
 {
-	"id": "sample-plugin",
-	"name": "Sample Plugin",
+	"id": "daily-note-template",
+	"name": "Daily Note Template",
 	"version": "1.0.0",
-	"minAppVersion": "1.0.0",
-	"description": "Demonstrates some of the capabilities of the Obsidian API.",
-	"author": "Obsidian",
-	"authorUrl": "https://obsidian.md",
-	"fundingUrl": "https://obsidian.md/pricing",
+	"minAppVersion": "1.5.7",
+	"description": "Expands sync-safe daily-note template expressions based on the note date.",
+	"author": "kodai",
 	"isDesktopOnly": false
 }

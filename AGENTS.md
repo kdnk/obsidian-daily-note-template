@@ -145,6 +145,19 @@ Follow Obsidian's **Developer Policies** and **Plugin Guidelines**. In particula
 
 ## Agent do/don't
 
+## Version control
+
+- Use `but` (GitButler CLI) for git operations by default in this repository.
+- If `but` is not set up yet, run the appropriate `but` setup command before continuing.
+- Pull requests may be created when useful.
+- Pull requests may be merged when the requested work is complete and verified.
+- Commit messages must follow Conventional Commits in English.
+- Commit descriptions must clearly explain both Why and What.
+- New version releases are the only case where using `git` directly on the `master` branch is allowed.
+- For a release, always fetch and update to the latest `master` branch before starting release work.
+- Use the npm version command to choose the release type (`npm version major`, `npm version minor`, or `npm version patch`).
+- After releasing a new version, push the release commit together with its tag.
+
 **Do**
 
 - Add commands with stable IDs (don't rename once released).
