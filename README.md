@@ -2,13 +2,12 @@
 
 Daily Note Template expands DNT expressions in Obsidian daily notes.
 
-It uses Obsidian's Daily notes settings to identify daily-note paths and templates. The plugin is intentionally conservative around Obsidian Sync:
+It uses Obsidian's Daily notes settings to identify daily-note paths. Obsidian's Daily notes and Templates plugins remain responsible for creating notes and applying the normal note template.
 
 - It expands `<% dnt... %>` expressions in existing daily notes.
-- It applies the configured Daily notes template only to an existing empty daily note after sync-safe waiting.
-- It creates a missing daily note only after Obsidian Sync is positively detected as complete.
-- If Sync state cannot be read while Sync is enabled, it waits instead of creating a note.
-- It never inserts the full template into a note that already has content.
+- It does not create missing daily notes.
+- It does not apply the full Daily notes template to empty notes.
+- It never waits on Obsidian Sync before expanding visible DNT expressions.
 
 ## Expressions
 

@@ -14,7 +14,6 @@ describe('diagnostics', () => {
 				baseDate: '2026-06-03',
 				contentLength: 37,
 				hasDntExpression: true,
-				syncState: 'unknown',
 				action: 'expand-dnt',
 			}),
 		).toBe(
@@ -28,7 +27,6 @@ describe('diagnostics', () => {
 				'base date: 2026-06-03',
 				'content length: 37',
 				'has dnt: yes',
-				'sync: unknown',
 				'action: expand-dnt',
 			].join('\n'),
 		);
@@ -42,7 +40,6 @@ describe('diagnostics', () => {
 				baseDate: null,
 				contentLength: null,
 				hasDntExpression: false,
-				syncState: 'unknown',
 				action: 'none',
 			}),
 		).toContain('daily settings: NOT FOUND');

@@ -1,4 +1,4 @@
-import { DailyNoteAction, SyncState } from './processing';
+import { DailyNoteAction } from './processing';
 import {
 	DailyNotesCoreSettings,
 	DailyNotesInternalShape,
@@ -10,7 +10,6 @@ export interface DiagnosticNoticeInput {
 	baseDate: string | null;
 	contentLength: number | null;
 	hasDntExpression: boolean;
-	syncState: SyncState;
 	action: DailyNoteAction;
 	internalShape?: DailyNotesInternalShape;
 }
@@ -26,7 +25,6 @@ export function formatDiagnosticNotice(input: DiagnosticNoticeInput): string {
 		`base date: ${input.baseDate ?? 'NO MATCH'}`,
 		`content length: ${input.contentLength ?? 'N/A'}`,
 		`has dnt: ${input.hasDntExpression ? 'yes' : 'no'}`,
-		`sync: ${input.syncState}`,
 		`action: ${input.action}`,
 		...formatInternalShape(input.internalShape),
 	].join('\n');

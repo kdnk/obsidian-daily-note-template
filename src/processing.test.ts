@@ -7,51 +7,41 @@ describe('daily note processing decision', () => {
 			decideDailyNoteAction({
 				fileExists: true,
 				content: 'Today: <% dnt.today() %>',
-				hasTemplate: true,
-				syncState: 'synced',
 			}),
 		).toBe('expand-dnt');
 	});
 
-	test('applies the template only to an existing empty file after sync is complete', () => {
+	test('does nothing for existing empty files because Obsidian owns template application', () => {
 		expect(
 			decideDailyNoteAction({
 				fileExists: true,
 				content: '',
-				hasTemplate: true,
-				syncState: 'synced',
 			}),
-		).toBe('apply-template');
+		).toBe('none');
 	});
 
-	test('does not create missing notes while sync is active or unknown', () => {
+	test('does not create missing notes because Obsidian owns daily-note creation', () => {
 		expect(
 			decideDailyNoteAction({
 				fileExists: false,
 				content: null,
-				hasTemplate: true,
-				syncState: 'syncing',
 			}),
-		).toBe('wait-for-sync');
+		).toBe('none');
 
 		expect(
 			decideDailyNoteAction({
 				fileExists: false,
 				content: null,
-				hasTemplate: true,
-				syncState: 'unknown',
 			}),
-		).toBe('wait-for-sync');
+		).toBe('none');
 	});
 
-	test('allows missing-note creation only after positive sync completion', () => {
+	test('does nothing for existing content without DNT expressions', () => {
 		expect(
 			decideDailyNoteAction({
-				fileExists: false,
-				content: null,
-				hasTemplate: true,
-				syncState: 'synced',
+				fileExists: true,
+				content: 'No DNT here',
 			}),
-		).toBe('create-from-template');
+		).toBe('none');
 	});
 });
