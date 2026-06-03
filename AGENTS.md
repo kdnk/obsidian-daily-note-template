@@ -145,6 +145,15 @@ Follow Obsidian's **Developer Policies** and **Plugin Guidelines**. In particula
 
 ## Agent do/don't
 
+## Version control
+
+- Use `but` (GitButler CLI) for git operations by default in this repository.
+- If `but` is not set up yet, run the appropriate `but` setup command before continuing.
+- Pull requests may be created when useful.
+- Pull requests may be merged when the requested work is complete and verified.
+- Commit messages must follow Conventional Commits in English.
+- Commit descriptions must clearly explain both Why and What.
+
 **Do**
 
 - Add commands with stable IDs (don't rename once released).
