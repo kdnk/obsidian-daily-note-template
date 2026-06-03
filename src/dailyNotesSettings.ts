@@ -1,6 +1,8 @@
 import { App, normalizePath } from 'obsidian';
 import { DailyNoteSettings } from './dailyNotePath';
 
+const DEFAULT_DAILY_NOTE_FORMAT = 'YYYY-MM-DD';
+
 export interface DailyNotesCoreSettings extends DailyNoteSettings {
 	template: string;
 }
@@ -40,11 +42,11 @@ export function getDailyNotesCoreSettings(app: App): DailyNotesCoreSettings | nu
 		return null;
 	}
 
-	const options = dailyNotes.options ?? dailyNotes.instance?.options;
-	const format = normalizeString(options?.format);
-	if (!format) {
-		return null;
-	}
+	const options = {
+		...(dailyNotes.instance?.options ?? {}),
+		...(dailyNotes.options ?? {}),
+	};
+	const format = normalizeString(options.format) ?? DEFAULT_DAILY_NOTE_FORMAT;
 
 	return {
 		folder: normalizePath(normalizeString(options?.folder) ?? ''),

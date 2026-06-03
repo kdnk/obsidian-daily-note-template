@@ -153,10 +153,12 @@ Follow Obsidian's **Developer Policies** and **Plugin Guidelines**. In particula
 - Pull requests may be merged when the requested work is complete and verified.
 - Commit messages must follow Conventional Commits in English.
 - Commit descriptions must clearly explain both Why and What.
+- After merging a pull request, return to the GitButler workspace and run `but pull --check`, then `but pull --status-after` before starting the next change.
 - New version releases are the only case where using `git` directly on the `master` branch is allowed.
 - For a release, always fetch and update to the latest `master` branch before starting release work.
 - Use the npm version command to choose the release type (`npm version major`, `npm version minor`, or `npm version patch`).
 - After releasing a new version, push the release commit together with its tag.
+- After pushing a release commit and tag from `master`, run `but setup` if needed, then `but pull --check` and `but pull --status-after` so GitButler's workspace target includes the release commit before any new edits.
 
 **Do**
 
