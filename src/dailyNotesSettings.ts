@@ -119,5 +119,9 @@ function objectKeys(value: unknown): string[] {
 }
 
 function normalizeString(value: unknown): string | null {
-	return typeof value === 'string' ? value.trim() : null;
+	if (typeof value !== 'string') {
+		return null;
+	}
+	const trimmed = value.trim();
+	return trimmed.length > 0 ? trimmed : null;
 }

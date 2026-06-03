@@ -60,6 +60,33 @@ describe('daily notes core settings', () => {
 		});
 	});
 
+	test('uses the Daily notes default format when Obsidian stores a blank format', () => {
+		const app = {
+			internalPlugins: {
+				getEnabledPluginById(id: string) {
+					if (id !== 'daily-notes') {
+						return null;
+					}
+					return {
+						instance: {
+							options: {
+								folder: 'journals',
+								format: '   ',
+								template: 'templates/daily',
+							},
+						},
+					};
+				},
+			},
+		};
+
+		expect(getDailyNotesCoreSettings(app as never)).toEqual({
+			folder: 'journals',
+			format: 'YYYY-MM-DD',
+			template: 'templates/daily',
+		});
+	});
+
 	test('summarizes internal plugin shape for mobile diagnostics', () => {
 		const app = {
 			internalPlugins: {
