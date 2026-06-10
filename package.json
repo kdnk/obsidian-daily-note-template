@@ -1,6 +1,6 @@
 {
 	"name": "daily-note-template",
-	"version": "1.0.7",
+	"version": "1.0.8",
 	"description": "Expands sync-safe daily-note template expressions based on the note date.",
 	"main": "main.js",
 	"type": "module",

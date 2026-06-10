@@ -1,7 +1,7 @@
 {
 	"id": "daily-note-template",
 	"name": "Daily Note Template",
-	"version": "1.0.7",
+	"version": "1.0.8",
 	"minAppVersion": "1.5.7",
 	"description": "Expands sync-safe daily-note template expressions based on the note date.",
 	"author": "kodai",
