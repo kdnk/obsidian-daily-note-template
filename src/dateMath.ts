@@ -11,6 +11,9 @@ export interface DateDelta {
 	years?: number;
 }
 
+type Weekday = 0 | 1 | 2 | 3 | 4 | 5 | 6;
+type WeekdayNames = readonly [string, string, string, string, string, string, string];
+
 export function parseDate(value: string): DateParts {
 	const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
 	if (!match) {
@@ -58,6 +61,7 @@ export function addToDate(date: DateParts, delta: DateDelta): DateParts {
 }
 
 export function formatDate(date: DateParts, format: string): string {
+	const weekday = dayOfWeek(date);
 	const replacements: Record<string, string> = {
 		YYYY: String(date.year).padStart(4, '0'),
 		YY: String(date.year).slice(-2),
@@ -65,11 +69,31 @@ export function formatDate(date: DateParts, format: string): string {
 		M: String(date.month),
 		DD: String(date.day).padStart(2, '0'),
 		D: String(date.day),
+		dddd: WEEKDAYS_LONG[weekday],
+		ddd: WEEKDAYS_SHORT[weekday],
 	};
 
-	return format.replace(/YYYY|YY|MM|M|DD|D/g, (token) => replacements[token] ?? token);
+	return format.replace(
+		/dddd|ddd|YYYY|YY|MM|M|DD|D/g,
+		(token) => replacements[token] ?? token,
+	);
 }
 
 function daysInMonth(year: number, month: number): number {
 	return new Date(Date.UTC(year, month, 0)).getUTCDate();
 }
+
+function dayOfWeek(date: DateParts): Weekday {
+	return new Date(Date.UTC(date.year, date.month - 1, date.day)).getUTCDay() as Weekday;
+}
+
+const WEEKDAYS_SHORT: WeekdayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const WEEKDAYS_LONG: WeekdayNames = [
+	'Sunday',
+	'Monday',
+	'Tuesday',
+	'Wednesday',
+	'Thursday',
+	'Friday',
+	'Saturday',
+];
