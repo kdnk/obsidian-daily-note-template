@@ -15,6 +15,15 @@ describe('daily note path', () => {
 		expect(date).toBe('2026-06-03');
 	});
 
+	test('parses a date from a Daily notes format that includes weekday tokens', () => {
+		const date = getDateFromDailyNotePath('journals/2026-06-03 Wed.md', {
+			folder: 'journals',
+			format: 'YYYY-MM-DD ddd',
+		});
+
+		expect(date).toBe('2026-06-03');
+	});
+
 	test('rejects paths outside the configured Daily notes folder', () => {
 		const date = getDateFromDailyNotePath('notes/2026-06-03.md', {
 			folder: 'journals',

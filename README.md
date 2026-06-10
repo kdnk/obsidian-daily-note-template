@@ -24,6 +24,8 @@ For `journals/2026-06-03.md`:
 <% dnt.addMonths(1) %>
 <% dnt.addYears(-1) %>
 <% dnt.format("YYYY/MM/DD") %>
+<% dnt.format("YYYY/MM/DD ddd") %>
+<% dnt.format("YYYY/MM/DD dddd") %>
 ```
 
 ## Development

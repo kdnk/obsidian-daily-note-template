@@ -26,5 +26,7 @@ describe('date math', () => {
 
 		expect(formatDate(base, 'YYYY/MM/DD')).toBe('2026/06/03');
 		expect(formatDate(base, 'YYYY年M月D日')).toBe('2026年6月3日');
+		expect(formatDate(base, 'YYYY/MM/DD ddd')).toBe('2026/06/03 Wed');
+		expect(formatDate(base, 'YYYY/MM/DD dddd')).toBe('2026/06/03 Wednesday');
 	});
 });

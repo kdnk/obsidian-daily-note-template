@@ -71,17 +71,28 @@ function normalizeFolder(folder: string): string {
 }
 
 function formatToRegExp(format: string): RegExp {
-	let pattern = escapeRegExp(format);
-	pattern = pattern
-		.replace(/YYYY/g, '(?<year>\\d{4})')
-		.replace(/MM/g, '(?<month>\\d{2})')
-		.replace(/M/g, '(?<month>\\d{1,2})')
-		.replace(/DD/g, '(?<day>\\d{2})')
-		.replace(/D/g, '(?<day>\\d{1,2})');
-
+	const pattern = format.replace(
+		/dddd|ddd|YYYY|MM|M|DD|D|[.*+?^${}()|[\]\\]/g,
+		(token) => {
+			switch (token) {
+				case 'dddd':
+					return '(?:Sunday|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday)';
+				case 'ddd':
+					return '(?:Sun|Mon|Tue|Wed|Thu|Fri|Sat)';
+				case 'YYYY':
+					return '(?<year>\\d{4})';
+				case 'MM':
+					return '(?<month>\\d{2})';
+				case 'M':
+					return '(?<month>\\d{1,2})';
+				case 'DD':
+					return '(?<day>\\d{2})';
+				case 'D':
+					return '(?<day>\\d{1,2})';
+				default:
+					return `\\${token}`;
+			}
+		},
+	);
 	return new RegExp(`^${pattern}$`);
-}
-
-function escapeRegExp(value: string): string {
-	return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
