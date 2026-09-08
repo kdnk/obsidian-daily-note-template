@@ -162,6 +162,7 @@ Follow Obsidian's **Developer Policies** and **Plugin Guidelines**. In particula
 
 **Do**
 
+- When updating note content, calculate the replacement inside `Vault.process`; treat `cachedRead` results as filters, not write inputs.
 - Add commands with stable IDs (don't rename once released).
 - Provide defaults and validation in settings.
 - Write idempotent code paths so reload/unload doesn't leak listeners or intervals.
