@@ -24,6 +24,33 @@ describe('daily note path', () => {
 		expect(date).toBe('2026-06-03');
 	});
 
+	test.each([
+		['YYYY/MM/YYYY-MM-DD', 'journals/2026/06/2026-06-03.md'],
+		['YYYY/M/YYYY-MM-DD', 'journals/2026/6/2026-06-03.md'],
+		['YYYY/MM/DD/YYYY-M-D', 'journals/2026/06/03/2026-6-3.md'],
+	])('parses consistent repeated date fields in %s', (format, path) => {
+		expect(getDateFromDailyNotePath(path, { folder: 'journals', format })).toBe(
+			'2026-06-03',
+		);
+	});
+
+	test.each([
+		'journals/2025/06/2026-06-03.md',
+		'journals/2026/05/2026-06-03.md',
+	])('rejects conflicting date fields in %s', (path) => {
+		expect(getDateFromDailyNotePath(path, {
+			folder: 'journals', format: 'YYYY/MM/YYYY-MM-DD',
+		})).toBeNull();
+	});
+
+	test.each(['2026-02-30', '2026-13-01', '2026-00-01'])(
+		'ignores invalid date filenames without throwing: %s', (date) => {
+			expect(getDateFromDailyNotePath(`journals/${date}.md`, {
+				folder: 'journals', format: 'YYYY-MM-DD',
+			})).toBeNull();
+		},
+	);
+
 	test('rejects paths outside the configured Daily notes folder', () => {
 		const date = getDateFromDailyNotePath('notes/2026-06-03.md', {
 			folder: 'journals',

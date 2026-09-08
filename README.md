@@ -9,6 +9,10 @@ It uses Obsidian's Daily notes settings to identify daily-note paths. Obsidian's
 - It does not apply the full Daily notes template to empty notes.
 - It never waits on Obsidian Sync before expanding visible DNT expressions.
 
+Template updates use Obsidian's atomic vault processing so edits saved during the initial read are preserved. Disabling the plugin cancels queued work and prevents pending reads from starting template writes.
+
+Daily-note paths support `YYYY`, `MM` / `M`, `DD` / `D`, and English `ddd` / `dddd` weekday names. Formats can repeat date fields, such as `YYYY/MM/YYYY-MM-DD` for year/month folders. Repeated fields must agree; paths with conflicting fields or invalid dates are ignored.
+
 ## Expressions
 
 Expressions are evaluated relative to the date parsed from the target daily-note path.

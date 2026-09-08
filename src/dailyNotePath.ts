@@ -20,22 +20,32 @@ export function getDateFromDailyNotePath(
 	}
 
 	const basename = relativePath.slice(0, -3);
-	const regexp = formatToRegExp(settings.format);
+	const { regexp, fields } = formatToRegExp(settings.format);
 	const match = regexp.exec(basename);
-	if (!match?.groups) {
+	if (!match) {
 		return null;
 	}
 
-	const year = match.groups.year;
-	const month = match.groups.month;
-	const day = match.groups.day;
-	if (!year || !month || !day) {
+	const date: Partial<Record<DateField, number>> = {};
+	for (const [index, field] of fields.entries()) {
+		const value = Number(match[index + 1]);
+		if (date[field] !== undefined && date[field] !== value) {
+			return null;
+		}
+		date[field] = value;
+	}
+	const { year, month, day } = date;
+	if (year === undefined || month === undefined || day === undefined) {
 		return null;
 	}
 
-	const normalized = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-	parseDate(normalized);
-	return normalized;
+	const normalized = formatDate({ year, month, day }, 'YYYY-MM-DD');
+	try {
+		parseDate(normalized);
+		return normalized;
+	} catch {
+		return null;
+	}
 }
 
 export function getPathForDailyNote(
@@ -70,7 +80,14 @@ function normalizeFolder(folder: string): string {
 	return folder.replace(/^\/+|\/+$/g, '');
 }
 
-function formatToRegExp(format: string): RegExp {
+type DateField = 'year' | 'month' | 'day';
+
+function formatToRegExp(format: string): { regexp: RegExp; fields: DateField[] } {
+	const fields: DateField[] = [];
+	const capture = (field: DateField, pattern: string): string => {
+		fields.push(field);
+		return `(${pattern})`;
+	};
 	const pattern = format.replace(
 		/dddd|ddd|YYYY|MM|M|DD|D|[.*+?^${}()|[\]\\]/g,
 		(token) => {
@@ -80,19 +97,19 @@ function formatToRegExp(format: string): RegExp {
 				case 'ddd':
 					return '(?:Sun|Mon|Tue|Wed|Thu|Fri|Sat)';
 				case 'YYYY':
-					return '(?<year>\\d{4})';
+					return capture('year', '\\d{4}');
 				case 'MM':
-					return '(?<month>\\d{2})';
+					return capture('month', '\\d{2}');
 				case 'M':
-					return '(?<month>\\d{1,2})';
+					return capture('month', '\\d{1,2}');
 				case 'DD':
-					return '(?<day>\\d{2})';
+					return capture('day', '\\d{2}');
 				case 'D':
-					return '(?<day>\\d{1,2})';
+					return capture('day', '\\d{1,2}');
 				default:
 					return `\\${token}`;
 			}
 		},
 	);
-	return new RegExp(`^${pattern}$`);
+	return { regexp: new RegExp(`^${pattern}$`), fields };
 }
